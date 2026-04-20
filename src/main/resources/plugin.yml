@@ -1,0 +1,8 @@
+name: TalismanPlugin
+version: 1.0
+main: me.yourname.talisman.TalismanPlugin
+api-version: 1.20
+
+commands:
+  talisman:
+    description: Open talisman GUI
