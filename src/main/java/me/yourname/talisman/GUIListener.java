@@ -12,47 +12,58 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class GUIListener implements Listener {
 
-    private static final String GUI_NAME = "§6Создание талисмана";
+    private static final String GUI_NAME = "§6Выбор талисмана";
 
     public static void openGUI(Player player) {
         Inventory inv = Bukkit.createInventory(null, 27, GUI_NAME);
 
-        ItemStack createButton = new ItemStack(Material.EMERALD);
-        ItemMeta meta = createButton.getItemMeta();
-        meta.setDisplayName("§aСоздать талисман");
-        createButton.setItemMeta(meta);
-
-        inv.setItem(22, createButton);
+        inv.setItem(11, createItem(Material.SUGAR, "§bТалисман скорости"));
+        inv.setItem(13, createItem(Material.BLAZE_POWDER, "§cТалисман силы"));
+        inv.setItem(15, createItem(Material.APPLE, "§aТалисман здоровья"));
 
         player.openInventory(inv);
+    }
+
+    private static ItemStack createItem(Material mat, String name) {
+        ItemStack item = new ItemStack(mat);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(name);
+        item.setItemMeta(meta);
+        return item;
     }
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {
         if (!e.getView().getTitle().equals(GUI_NAME)) return;
 
+        e.setCancelled(true);
+
         Player player = (Player) e.getWhoClicked();
 
-        if (e.getSlot() == 22) {
-            e.setCancelled(true);
+        ItemStack clicked = e.getCurrentItem();
+        if (clicked == null || clicked.getType().isAir()) return;
 
-            ItemStack item = e.getInventory().getItem(13);
+        switch (clicked.getType()) {
+            case SUGAR:
+                player.getInventory().addItem(
+                        TalismanManager.createTalisman("speed")
+                );
+                player.sendMessage("§bТы получил талисман скорости!");
+                break;
 
-            if (item == null || item.getType().isAir()) {
-                player.sendMessage("§cПоложи предмет в центр!");
-                return;
-            }
+            case BLAZE_POWDER:
+                player.getInventory().addItem(
+                        TalismanManager.createTalisman("strength")
+                );
+                player.sendMessage("§cТы получил талисман силы!");
+                break;
 
-            ItemStack talisman = TalismanManager.createTalisman(item);
-
-            player.getInventory().addItem(talisman);
-            player.sendMessage("§aТалисман создан!");
-        }
-
-        if (e.getSlot() == 13) {
-            e.setCancelled(false);
-        } else {
-            e.setCancelled(true);
+            case APPLE:
+                player.getInventory().addItem(
+                        TalismanManager.createTalisman("health")
+                );
+                player.sendMessage("§aТы получил талисман здоровья!");
+                break;
         }
     }
 }
