@@ -1,6 +1,7 @@
 package me.yourname.talisman;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.entity.Player;
 
 public class TalismanPlugin extends JavaPlugin {
 
@@ -11,7 +12,8 @@ public class TalismanPlugin extends JavaPlugin {
         instance = this;
 
         getCommand("talisman").setExecutor((sender, command, label, args) -> {
-            if (sender instanceof org.bukkit.entity.Player player) {
+            if (sender instanceof Player) {
+                Player player = (Player) sender;
                 GUIListener.openGUI(player);
             }
             return true;
